@@ -10,22 +10,22 @@ public class Panier {
     /**
      * id du panier
      */
-    private int id_panier;
+    protected int id_panier;
 
     /**
      * Prix du panier
      */
-    private float prix;
+    protected float prix;
 
     /**
-     * Quantité de paniers disponibles;
+     * Quantité de paniers disponibles
      */
-    private int qtt_panier_dispo;
+    protected int qtt_panier_dispo;
 
     /**
      * Date de la dernière mise à jour du panier
      */
-    private Date derniere_maj;
+    protected Date derniere_maj;
 
     public Panier() {}
 
