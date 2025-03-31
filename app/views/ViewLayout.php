@@ -25,9 +25,11 @@ class ViewLayout
                 <header>
                     <nav>
                         <ul>
-                            <li><a href="/index.php?ctrl=homepage">Accueil</a></li>
-                            <li><a href="/index.php?ctrl=products">Produits</a></li>
-                            <li><a href="/index.php?ctrl=login">Connexion</a></li>
+                            <li><a href="/index.php?action=homepage">Accueil</a></li>
+                            <li><a href="/index.php?action=products">Produits</a></li>
+                            <li><a href="/index.php?action=order">Commandes</a></li>
+                            <li><a href="/index.php?action=basket">Panier</a></li>
+                            <li><a href="/index.php?action=logout">Se déconnecter</a></li>
                         </ul>
                     </nav>
                 </header>

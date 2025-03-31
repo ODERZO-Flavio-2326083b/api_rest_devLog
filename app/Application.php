@@ -13,8 +13,8 @@ class Application
     }
     private function getControllerClass(): string
     {
-        if (!empty($_GET['ctrl'])) {
-            return 'controllers\\Controller' . ucfirst($this->validateControllerName($_GET['ctrl']));
+        if (!empty($_GET['action'])) {
+            return 'controllers\\Controller' . ucfirst($this->validateControllerName($_GET['action']));
         }
 
         return ControllerHomepage::class;

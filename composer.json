@@ -5,5 +5,7 @@
       "controllers\\": "app/controllers/",
       "views\\": "app/views/"
     }
+  }, "require": {
+    "ext-curl": "*"
   }
 }
