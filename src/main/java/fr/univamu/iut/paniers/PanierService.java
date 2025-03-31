@@ -1,5 +1,7 @@
 package fr.univamu.iut.paniers;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbBuilder;
 
@@ -9,6 +11,7 @@ import java.util.ArrayList;
  * Classe utilisée pour récupérer les informations nécessaires à la ressource
  * (permet de dissocier ressource et mode d'accès aux données)
  */
+@ApplicationScoped
 public class PanierService {
 
     /**
@@ -17,11 +20,17 @@ public class PanierService {
     protected PanierRepositoryInterface panierRepo;
 
     /**
+     * Objet permettant d'accéder aux données sur les produits
+     */
+    protected ProduitClientInterface produitClient;
+
+    /**
      * Constructeur permettant d'injecter l'accès aux données
      * @param panierRepo objet implémentant l'interface d'accès aux données
      */
-    public PanierService(PanierRepositoryInterface panierRepo) {
+    public PanierService(PanierRepositoryInterface panierRepo, ProduitClientInterface produitClient) {
         this.panierRepo = panierRepo;
+        this.produitClient = produitClient;
     }
 
     /**
@@ -35,6 +44,18 @@ public class PanierService {
         String result = null;
         try( Jsonb jsonb = JsonbBuilder.create()){
             result = jsonb.toJson(allPaniers);
+        }
+        catch (Exception e){
+            System.err.println( e.getMessage() );
+        }
+
+        return result;
+    }
+
+    public String getAllProduitsJSON() {
+        String result = null;
+        try( Jsonb jsonb = JsonbBuilder.create()){
+            result = jsonb.toJson(produitClient.getProduits());
         }
         catch (Exception e){
             System.err.println( e.getMessage() );

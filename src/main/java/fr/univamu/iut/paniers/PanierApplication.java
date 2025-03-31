@@ -36,4 +36,17 @@ public class PanierApplication extends Application {
     private void closeDbConnection(@Disposes PanierRepositoryInterface PanierRepo ) {
         PanierRepo.close();
     }
+
+    @Produces
+    private ProduitClientInterface openProduitClient() {
+        return new ProduitClient();
+    }
+
+    /**
+     * Méthode pour fermer la connexion à l'API des produits
+     * @param ProduitClient la connexion à l'API des produits à fermer
+     */
+    private void closeProduitClient(@Disposes ProduitClientInterface ProduitClient ) {
+        ProduitClient.close();
+    }
 }

@@ -27,8 +27,8 @@ public class PanierRessource {
      * Constructeur permettant d'initialiser le service avec une interface d'accès aux données
      * @param panierRepo objet implémentant l'interface d'accès aux données
      */
-    public @Inject PanierRessource(PanierRepositoryInterface panierRepo) {
-        this.service = new PanierService(panierRepo);
+    public @Inject PanierRessource(PanierRepositoryInterface panierRepo, ProduitClientInterface produitClient) {
+        this.service = new PanierService(panierRepo, produitClient);
     }
 
     /**
@@ -42,6 +42,13 @@ public class PanierRessource {
     @Produces("application/json")
     public String getAllPaniers() {
         return service.getAllPaniersJSON();
+    }
+
+    @GET
+    @Path("coucou")
+    @Produces("application/json")
+    public String getAllProduits() {
+        return service.getAllProduitsJSON();
     }
 
     @GET
