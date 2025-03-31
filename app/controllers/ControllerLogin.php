@@ -9,7 +9,6 @@ class ControllerLogin
 {
     public function execute(): void
     {
-        /*
         // Si l'utilisateur est déjà connecté, le rediriger vers l'accueil
         if (isset($_SESSION['user_id'])) {
             header('Location: index.php?action=homepage');
@@ -30,7 +29,6 @@ class ControllerLogin
                 // Authentification réussie
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['user_pseudo'] = $user['pseudo'];
-                // $_SESSION['is_admin'] = $user['is_admin'] ?? false;
 
                 header('Location: index.php?action=homepage');
                 exit;
@@ -38,8 +36,7 @@ class ControllerLogin
                 $error = 'Identifiants incorrects';
             }
         }
-        */
 
-        (new ViewLogin())->show();
+        (new ViewLogin())->show(['error' => $error]);
     }
 }

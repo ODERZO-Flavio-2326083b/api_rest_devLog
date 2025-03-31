@@ -30,6 +30,8 @@ class Application
     public function run(): void
     {
         ob_start();
+        session_start();
+
         try {
             $controllerClass = $this->getControllerClass();
 
