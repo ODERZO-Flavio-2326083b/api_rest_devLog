@@ -27,6 +27,11 @@ public class Panier {
      */
     protected Date derniere_maj;
 
+    /**
+     * Liste des produits composant le panier
+     */
+    protected List<Produit> produits;
+
     public Panier() {}
 
     public Panier(int id_panier, float prix, int qtt_panier_dispo, Date derniere_maj) {

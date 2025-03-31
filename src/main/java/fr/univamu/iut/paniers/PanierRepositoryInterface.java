@@ -15,7 +15,7 @@ public interface PanierRepositoryInterface {
     /**
      * Méthode retournant le panier dont l'id est passé en paramètre
      * @param id_panier identifiant du panier recherché
-     * @return un objet Book représentant le panier recherché
+     * @return un objet Panier représentant le panier recherché
      */
     public Panier getPanier( int id_panier );
 

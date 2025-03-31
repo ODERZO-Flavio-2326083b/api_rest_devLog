@@ -6,7 +6,7 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Response;
 
 /**
- * Ressource associée aux livres
+ * Ressource associée aux paniers
  * (point d'accès de l'API REST)
  */
 @Path("/paniers")
@@ -14,7 +14,7 @@ import jakarta.ws.rs.core.Response;
 public class PanierRessource {
 
     /**
-     * Service utilisé pour accéder aux données des livres et récupérer/modifier leurs informations
+     * Service utilisé pour accéder aux données des paniers et récupérer/modifier leurs informations
      */
     private PanierService service;
 
@@ -32,7 +32,7 @@ public class PanierRessource {
     }
 
     /**
-     * Constructeur permettant d'initialiser le service d'accès aux livres
+     * Constructeur permettant d'initialiser le service d'accès aux paniers
      */
     public PanierRessource( PanierService service ){
         this.service = service;
@@ -47,7 +47,7 @@ public class PanierRessource {
     @GET
     @Path("{reference}")
     @Produces("application/json")
-    public String getBook( @PathParam("reference") int id_panier){
+    public String getPanier( @PathParam("reference") int id_panier){
 
         String result = service.getPanierJSON(id_panier);
 
@@ -61,7 +61,7 @@ public class PanierRessource {
     @PUT
     @Path("{reference}")
     @Consumes("application/json")
-    public Response updateBook(@PathParam("reference") int id_panier, Panier panier ){
+    public Response updatePanier(@PathParam("reference") int id_panier, Panier panier ){
 
         // si le panier n'a pas été trouvé
         if( ! service.updatePanier(id_panier, panier) )

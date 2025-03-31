@@ -13,8 +13,8 @@ public class PanierApplication extends Application {
     /**
      * Méthode appelée par l'API CDI pour injecter la connection à la base de données au moment de la création
      * de la ressource
-     * @return un objet implémentant l'interface BookRepositoryInterface utilisée
-     *          pour accéder aux données des livres, voire les modifier
+     * @return un objet implémentant l'interface PanierRepositoryInterface utilisée
+     *          pour accéder aux données des paniers, voire les modifier
      */
     @Produces
     private PanierRepositoryInterface openDbConnection(){
@@ -31,9 +31,9 @@ public class PanierApplication extends Application {
 
     /**
      * Méthode permettant de fermer la connexion à la base de données lorsque l'application est arrêtée
-     * @param bookRepo la connexion à la base de données instanciée dans la méthode @openDbConnection
+     * @param PanierRepo la connexion à la base de données instanciée dans la méthode @openDbConnection
      */
-    private void closeDbConnection(@Disposes PanierRepositoryInterface bookRepo ) {
-        bookRepo.close();
+    private void closeDbConnection(@Disposes PanierRepositoryInterface PanierRepo ) {
+        PanierRepo.close();
     }
 }
