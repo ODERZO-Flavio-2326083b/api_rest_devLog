@@ -21,8 +21,6 @@ public class CommandeRepositoryMariadb implements CommandeRepositoryInterface, C
      *                       (p.ex. jdbc:mariadb://mysql-[compte].alwaysdata.net/[compte]_cooperative
      * @param user chaîne de caractères contenant l'identifiant de connexion à la base de données
      * @param pwd chaîne de caractères contenant le mot de passe à utiliser
-     * @throws java.sql.SQLException
-     * @throws java.lang.ClassNotFoundException
      */
     public CommandeRepositoryMariadb(String infoConnection, String user, String pwd) throws java.sql.SQLException, java.lang.ClassNotFoundException
     {
@@ -128,7 +126,7 @@ public class CommandeRepositoryMariadb implements CommandeRepositoryInterface, C
     public boolean updatePanierOfCommande(int id_commande, int id_panier, int quantite) {
         String checkQuery = "SELECT quantite FROM ComposeCommande WHERE id_commande = ? AND id_panier = ?";
         String updateQuery = "UPDATE ComposeCommande SET quantite = ? WHERE id_commande = ? AND id_panier = ?";
-        String insertQuery = "INSERT INTO ComposePanier (id_commande, id_panier, quantite) VALUES (?, ?, ?)";
+        String insertQuery = "INSERT INTO ComposeCommande (id_commande, id_panier, quantite) VALUES (?, ?, ?)";
 
         int rowsAffected;
         try (PreparedStatement checkStmt = dbConnection.prepareStatement(checkQuery)) {
@@ -159,12 +157,12 @@ public class CommandeRepositoryMariadb implements CommandeRepositoryInterface, C
         return (rowsAffected != 0);
     }
 
-    public boolean deletePanierFromCommande(int id_commande, int id_produit) {
-        String query = "DELETE FROM ComposeCommande WHERE id_commande = ? AND id_produit = ?";
+    public boolean deletePanierFromCommande(int id_commande, int id_panier) {
+        String query = "DELETE FROM ComposeCommande WHERE id_commande = ? AND id_panier = ?";
         int rowsAffected;
         try (PreparedStatement ps = dbConnection.prepareStatement(query)) {
             ps.setInt(1, id_commande);
-            ps.setInt(2, id_produit);
+            ps.setInt(2, id_panier);
 
             rowsAffected = ps.executeUpdate();
 

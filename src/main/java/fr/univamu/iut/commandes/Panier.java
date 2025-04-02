@@ -28,8 +28,6 @@ public class Panier {
     /**
      * Date de la dernière mise à jour du panier
      */
-    @JsonbTypeDeserializer(using = LocalDateDeserializer.class)
-    @JsonbDateFormat(value = "yyyy-MM-dd'Z'", locale = "Locale.FRENCH")
     protected Date derniere_maj;
 
     public Panier() {}

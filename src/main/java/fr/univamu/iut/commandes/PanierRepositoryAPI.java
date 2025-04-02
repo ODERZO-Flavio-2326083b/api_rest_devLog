@@ -1,8 +1,8 @@
 package fr.univamu.iut.commandes;
 
-import jakarta.json.bind.Jsonb;
-import jakarta.json.bind.JsonbBuilder;
-import jakarta.json.bind.JsonbConfig;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonReader;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
@@ -10,6 +10,10 @@ import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
+import java.io.StringReader;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -45,14 +49,24 @@ public class PanierRepositoryAPI implements PanierRepositoryInterface {
 
         if (response.getStatus() == 200) {
 
-            JsonbConfig config = new JsonbConfig()
-                    .withProperty("org.eclipse.yasson.YassonConfig#ZERO_TIME_PARSE_DEFAULTING", true);
-            Jsonb jsonb = JsonbBuilder.create(config);
-
             String json = response.readEntity(String.class);
-            myPanier = jsonb.fromJson(json, Panier.class);
+            try (JsonReader jsonReader = Json.createReader(new StringReader(json))) {
+                // désérialisation manuelle en raison d'un problème lors de la création d'un objet date.
+                JsonObject jsonObject = jsonReader.readObject();
 
-            client.close();
+                myPanier = new Panier();
+                myPanier.setId_panier(jsonObject.getInt("id_panier"));
+
+                String dateStr = jsonObject.getString("derniere_maj");
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                Date date = formatter.parse(dateStr);
+                myPanier.setDerniere_maj(date);
+            }
+            catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+        client.close();
         return myPanier;
     }
 
