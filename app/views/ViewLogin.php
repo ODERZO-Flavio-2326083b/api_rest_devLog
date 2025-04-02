@@ -2,11 +2,24 @@
 
 namespace views;
 
+/**
+ * Class ViewLogin
+ * @package views
+ *
+ * Permet d'afficher le formulaire de connexion.
+ */
 class ViewLogin
 {
+    /**
+     * Affiche le formulaire de connexion.
+     *
+     * @return void
+     */
     public function show(): void
     {
+        // Démarre la mise en tampon de sortie
         ob_start();
+
         $pseudo = htmlspecialchars($_GET['email'] ?? '', ENT_QUOTES, 'UTF-8');
         ?>
 

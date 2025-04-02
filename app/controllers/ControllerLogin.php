@@ -5,8 +5,21 @@ namespace controllers;
 use models\ModelUser;
 use views\ViewLogin;
 
+/**
+ * ControllerLogin
+ * @package controllers
+ */
 class ControllerLogin
 {
+    /**
+     * Execute le contrôleur.
+     *
+     * Démarre la session et vérifie si l'utilisateur est connecté.
+     * Si l'utilisateur est déjà connecté, il est redirigé vers la page d'accueil.
+     * Sinon, il affiche le formulaire de connexion.
+     *
+     * @return void
+     */
     public function execute(): void
     {
         // Si l'utilisateur est déjà connecté, le rediriger vers l'accueil
@@ -37,6 +50,7 @@ class ControllerLogin
             }
         }
 
+        // Affichage du formulaire de connexion
         (new ViewLogin())->show(['error' => $error]);
     }
 }

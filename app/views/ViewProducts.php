@@ -2,17 +2,39 @@
 
 namespace views;
 
+/**
+ * Class ViewProducts
+ * @package views
+ *
+ * Permet de visualiser les produits disponibles.
+ */
 class ViewProducts
 {
+    /**
+     * ViewProducts constructor.
+     *
+     * @param array $produits Liste des produits disponibles
+     */
     private array $produits;
 
+    /**
+     * ViewProducts constructor.
+     *
+     * @param array $produits Liste des produits
+     */
     public function __construct(array $produits)
     {
         $this->produits = $produits;
     }
 
+    /**
+     * Affiche la vue des produits disponibles.
+     *
+     * @return void
+     */
     public function show(): void
     {
+        // Démarre la mise en tampon de sortie
         ob_start();
         ?>
 
@@ -37,11 +59,12 @@ class ViewProducts
             <?php endforeach; ?>
             </tbody>
         </table>
-    <?php else: ?>
-        <p>Aucun produit disponible pour le moment.</p>
-    <?php endif; ?>
+        <?php else: ?>
+            <p>Aucun produit disponible pour le moment.</p>
+        <?php endif; ?>
 
         <?php
+        // Récupère le contenu mis en tampon et l'affiche
         (new ViewLayout("Produits", ob_get_clean()))->show();
     }
 }

@@ -2,8 +2,17 @@
 
 namespace models;
 
+/**
+ * Modèle pour la gestion des produits.
+ * @package models
+ * Ce modèle est responsable de la récupération des produits depuis l'API.
+ */
 class ModelProducts
 {
+    /**
+     * Récupère la liste des produits depuis l'API.
+     * @return array
+     */
     public function getProducts(): array
     {
         // URL de l'API qui fournit les données utilisateurs

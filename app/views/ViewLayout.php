@@ -2,14 +2,32 @@
 
 namespace views;
 
+/**
+ * Class ViewLayout
+ * @package views
+ *
+ * Permet d'afficher le layout de l'application.
+ */
 class ViewLayout
 {
 
+    /**
+     * ViewLayout constructor.
+     *
+     * @param string $title Titre de la page
+     * @param string $content Contenu de la page
+     */
     public function __construct(
         private readonly string $title,
         private readonly string $content
     ) {
     }
+
+    /**
+     * Affiche le layout de l'application.
+     *
+     * @return void
+     */
     public function show(): void
     {
         ?>

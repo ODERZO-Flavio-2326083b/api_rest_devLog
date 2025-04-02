@@ -2,16 +2,34 @@
 
 namespace models;
 
+/**
+ * ModelUser
+ *
+ * Modèle de gestion des utilisateurs
+ *
+ * @package models
+ */
 class ModelUser
 {
+    /**
+     * @var array Liste des utilisateurs
+     */
     private $users = [];
 
+    /**
+     * ModelUser constructor.
+     * Charge les utilisateurs depuis l'API au moment de l'instanciation
+     */
     public function __construct()
     {
         // Charger les utilisateurs depuis l'API
         $this->users = $this->fetchUsersFromApi();
     }
 
+    /**
+     * Récupère la liste des utilisateurs depuis l'API
+     * @return array
+     */
     private function fetchUsersFromApi()
     {
         // URL de l'API qui fournit les données utilisateurs
@@ -51,8 +69,15 @@ class ModelUser
         return $users;
     }
 
+    /**
+     * Authentifie un utilisateur
+     * @param string $pseudo
+     * @param string $password
+     * @return array|null
+     */
     public function authenticate(string $pseudo, string $password)
     {
+        // Vérifie si le pseudo et le mot de passe sont valides
         foreach ($this->users as $user) {
             if ($user['pseudo'] === $pseudo && $user['mdp'] === $password) {
                 return [
@@ -64,14 +89,19 @@ class ModelUser
         return null; // Authentification échouée
     }
 
+    /**
+     * Retourne un utilisateur à partir de son ID
+     * @param $id
+     * @return mixed|null
+     */
     public function getUserById($id)
     {
+        // Recherche l'utilisateur par ID
         foreach ($this->users as $user) {
             if ($user['id'] == $id) {
                 return $user;
             }
         }
-
         return null;
     }
 }

@@ -4,10 +4,24 @@ namespace views;
 
 use views\ViewLayout;
 
+/**
+ * Class ViewHomepage
+ * @package views
+ *
+ * Permet d'afficher la page d'accueil de la coopérative agricole.
+ */
 class ViewHomepage
 {
+    /**
+     * Affiche la page d'accueil.
+     *
+     * Cette méthode génère le contenu de la page d'accueil et l'affiche à l'aide de la classe ViewLayout.
+     *
+     * @return void
+     */
     public function show(): void
     {
+        // Démarre la mise en tampon de sortie
         ob_start();
         ?>
             <h1>Bienvenue sur la plateforme de la coopérative agricole !</h1>
@@ -20,6 +34,8 @@ class ViewHomepage
         </section>
 
         <?php
+
+        // Récupère le contenu mis en tampon et l'affiche
         (new ViewLayout("Accueil - Coopérative Agricole", ob_get_clean()))->show();
     }
 }
