@@ -1,8 +1,11 @@
 package fr.univamu.iut.commandes;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
 import jakarta.ws.rs.*;
 import jakarta.inject.Inject;
+import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 import java.util.Map;
@@ -63,10 +66,22 @@ public class CommandeResource {
     @POST
     @Consumes("application/json")
     public Response addCommande(Commande commande) {
-        if (!service.addCommande(commande))
+        int commandeId = service.addCommande(commande);
+
+        if (commandeId == -2)
             throw new NotFoundException();
-        else
-            return Response.ok("added").build();
+        else if (commandeId == -1)
+            throw new BadRequestException();
+        else {
+            JsonObject responseJson = Json.createObjectBuilder()
+                    .add("id_commande", commandeId)
+                    .build();
+
+            return Response.status(Response.Status.CREATED)
+                    .entity(responseJson.toString())
+                    .type(MediaType.APPLICATION_JSON)
+                    .build();
+        }
     }
 
     /**

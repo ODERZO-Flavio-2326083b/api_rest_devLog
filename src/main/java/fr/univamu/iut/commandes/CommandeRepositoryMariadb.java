@@ -40,8 +40,12 @@ public class CommandeRepositoryMariadb implements CommandeRepositoryInterface, C
     }
 
     @Override
-    public boolean addCommande(int id_utilisateur, Date date_retrait, List<Integer> id_paniers, String relai) {
+    public int addCommande(int id_utilisateur, Date date_retrait, List<Integer> id_paniers, String relai) {
         String query = "INSERT INTO Commande (id_utilisateur, date_retrait, relai) VALUES (?,?,?)";
+
+        if (id_paniers.isEmpty()) {
+            throw new IllegalArgumentException("id_panier vide");
+        }
 
         int rowsAffected;
         int idCommande = 0;
@@ -71,8 +75,8 @@ public class CommandeRepositoryMariadb implements CommandeRepositoryInterface, C
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
-        return rowsAffected != 0;
+        System.err.println(idCommande);
+        return idCommande;
     }
 
     private boolean addPanierToCommande(int id_commande, int id_panier, int quantite) {

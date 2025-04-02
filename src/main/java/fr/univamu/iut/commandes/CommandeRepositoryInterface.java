@@ -19,9 +19,10 @@ public interface CommandeRepositoryInterface {
      * @param id_utilisateur l'id de l'utilisateur ayant passé la commande
      * @param date_retrait la date de retrait de la commande
      * @param id_paniers une liste correspondant aux ids des paniers à contenus dans la commande
-     * @return true si l'ajout à été fait, false sinon
+     * @param relai un string contenant le nom du relai
+     * @return l'id du nouvel
      */
-    boolean addCommande(int id_utilisateur, Date date_retrait, List<Integer> id_paniers, String relai);
+    int addCommande(int id_utilisateur, Date date_retrait, List<Integer> id_paniers, String relai);
 
     /**
      * Méthode retournant la commande dont l'id est passé en paramètre
@@ -48,6 +49,7 @@ public interface CommandeRepositoryInterface {
      * @param id_commande le nouvel id de la commande
      * @param id_utilisateur le nouvel id de l'utilisateur
      * @param date_retrait la nouvelle date de retrait de la commande
+     * @param relai le nouveau relai
      * @return true si le livre existe et la mise à jour a été faite, false sinon
      */
     boolean updateCommande(int id_commande, int id_utilisateur, java.sql.Date date_retrait, String relai);

@@ -36,10 +36,16 @@ public class CommandeService {
     /**
      * Méthode ajoutant une nouvelle commande à la base de données
      * @param commande la commande à ajouter
-     * @return true si l'ajout a bien été effectué, false sinon
+     * @return entier de la nouvelle commande si tout va bien, -1 s'il y a eu une erreur
      */
-    public boolean addCommande(Commande commande) {
-        return commandRepo.addCommande(commande.id_utilisateur, commande.date_retrait, commande.id_paniers, commande.relai);
+    public int addCommande(Commande commande) {
+        try {
+            return commandRepo.addCommande(commande.id_utilisateur, commande.date_retrait, commande.id_paniers, commande.relai);
+        } catch (IllegalArgumentException e) {
+            return -1;
+        } catch (RuntimeException e) {
+            return -2;
+        }
     }
 
     /**
