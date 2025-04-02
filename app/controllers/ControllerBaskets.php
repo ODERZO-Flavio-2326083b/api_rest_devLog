@@ -17,7 +17,8 @@ class ControllerBaskets
      * Démarre la session et vérifie si l'utilisateur est connecté.
      * Si l'utilisateur n'est pas connecté, il est redirigé vers la page de connexion.
      * Récupère les paniers de l'utilisateur et les détails d'un panier spécifique si un ID est fourni.
-     * Affiche la vue des paniers avec les données récupérées.
+     *
+     * Affiche la vue des paniers avec les données récupérées et gère le passage de l'ID utilisateur pour passer commande.
      *
      * @var ModelBaskets
      */
@@ -31,6 +32,8 @@ class ControllerBaskets
             exit;
         }
 
+        $userId = $_SESSION['user_id'];
+
         // Récupération des paniers
         $model = new ModelBaskets();
         $baskets = $model->getBaskets();
@@ -42,6 +45,6 @@ class ControllerBaskets
         }
 
         // Affichage de la vue des paniers
-        (new ViewBaskets($baskets, $basketDetails))->show();
+        (new ViewBaskets($baskets, $basketDetails, $userId))->show();
     }
 }

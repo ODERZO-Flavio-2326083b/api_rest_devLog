@@ -37,7 +37,7 @@ class ViewLogin
                 Connectez- vous !
             </h1>
             <form method="POST" action="">
-                <label for="pseudo">E-mail</label> <br>
+                <label for="pseudo">Pseudo</label> <br>
                 <input
                         type="text"
                         id="pseudo"

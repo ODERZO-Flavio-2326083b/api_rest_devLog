@@ -30,7 +30,7 @@ class ViewHomepage
             <p>Chaque semaine, nous vous proposons une sélection de fruits, légumes, œufs, volailles et fromages issus de nos exploitations locales.</p>
             <h3>Un engagement local et durable</h3>
             <p>En achetant nos paniers, vous soutenez les producteurs locaux et favorisez une alimentation saine et responsable.</p>
-            <a href="/index.php?action=products" class="btn">Explorer nos paniers</a>
+            <a href="/index.php?action=baskets" class="btn">Explorer nos paniers</a>
         </section>
 
         <?php
