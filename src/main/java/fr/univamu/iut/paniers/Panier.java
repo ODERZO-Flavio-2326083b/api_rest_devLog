@@ -74,6 +74,14 @@ public class Panier {
         this.derniere_maj = derniere_maj;
     }
 
+    public void setProduits(List<Produit> produits) {
+        this.produits = produits;
+    }
+
+    public List<Produit> getProduits() {
+        return produits;
+    }
+
     @Override
     public String toString() {
         return "Panier{" +

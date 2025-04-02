@@ -4,6 +4,7 @@ import java.io.Closeable;
 import java.util.ArrayList;
 import java.sql.*;
 import java.util.Calendar;
+import java.util.List;
 
 public class PanierRepositoryMariadb implements Closeable, PanierRepositoryInterface {
 
@@ -39,6 +40,29 @@ public class PanierRepositoryMariadb implements Closeable, PanierRepositoryInter
             throw new RuntimeException(e);
         }
         return selectedPanier;
+    }
+
+    /**
+     * À partir d'un id de panier, renvoie la liste des ids produits qui le compose
+     * @param id_panier id du panier
+     * @return Liste des ids produits
+     */
+    public List<Integer> getProduitIdsOfPanier(int id_panier) {
+        List<Integer> produitIds = new ArrayList<>();
+        String query = "SELECT id_produit FROM ComposePanier WHERE id_panier = ?";
+
+        try (PreparedStatement ps = dbConnection.prepareStatement(query)) {
+            ps.setInt(1, id_panier);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                produitIds.add(rs.getInt("id_produit"));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return produitIds;
     }
 
     @Override
@@ -86,6 +110,57 @@ public class PanierRepositoryMariadb implements Closeable, PanierRepositoryInter
         }
 
         return (nbRowModified != 0);
+    }
+
+    @Override
+    public boolean deleteProduitFromPanier(int id_panier, int id_produit) {
+        String query = "DELETE FROM ComposePanier WHERE id_panier = ? AND id_produit = ?";
+        int rowsAffected;
+        try (PreparedStatement ps = dbConnection.prepareStatement(query)) {
+            ps.setInt(1, id_panier);
+            ps.setInt(2, id_produit);
+
+            rowsAffected = ps.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return (rowsAffected != 0);
+    }
+
+    @Override
+    public boolean updateProduitOfPanier(int id_panier, int id_produit, int quantite) {
+        String checkQuery = "SELECT quantite FROM ComposePanier WHERE id_panier = ? AND id_produit = ?";
+        String updateQuery = "UPDATE ComposePanier SET quantite = quantite + ? WHERE id_panier = ? AND id_produit = ?";
+        String insertQuery = "INSERT INTO ComposePanier (id_panier, id_produit, quantite) VALUES (?, ?, ?)";
+
+        int rowsAffected;
+        try (PreparedStatement checkStmt = dbConnection.prepareStatement(checkQuery)) {
+            checkStmt.setInt(1, id_panier);
+            checkStmt.setInt(2, id_produit);
+            ResultSet rs = checkStmt.executeQuery();
+
+            if (rs.next()) {
+                try (PreparedStatement updateStmt = dbConnection.prepareStatement(updateQuery)) {
+                    updateStmt.setInt(1, quantite);
+                    updateStmt.setInt(2, id_panier);
+                    updateStmt.setInt(3, id_produit);
+                    rowsAffected = updateStmt.executeUpdate();
+                }
+            } else {
+                try (PreparedStatement insertStmt = dbConnection.prepareStatement(insertQuery)) {
+                    insertStmt.setInt(1, id_panier);
+                    insertStmt.setInt(2, id_produit);
+                    insertStmt.setInt(3, quantite);
+                    rowsAffected = insertStmt.executeUpdate();
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return (rowsAffected != 0);
     }
 
     @Override

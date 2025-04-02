@@ -38,15 +38,15 @@ public class PanierApplication extends Application {
     }
 
     @Produces
-    private ProduitClientInterface openProduitClient() {
-        return new ProduitClient();
+    private ProduitsUtilisateursRepositoryInterface openProduitClient() {
+        return new ProduitsUtilisateursRepositoryAPI("http://localhost:8080/produitsutilisateurs-1.0-SNAPSHOT/api/");
     }
 
     /**
      * Méthode pour fermer la connexion à l'API des produits
-     * @param ProduitClient la connexion à l'API des produits à fermer
+     * @param produitsRepo la connexion à l'API des produits à fermer
      */
-    private void closeProduitClient(@Disposes ProduitClientInterface ProduitClient ) {
-        ProduitClient.close();
+    private void closeProduitClient(@Disposes ProduitsUtilisateursRepositoryInterface produitsRepo ) {
+        produitsRepo.close();
     }
 }
