@@ -5,6 +5,9 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Response;
 
+import java.lang.annotation.Repeatable;
+import java.util.Map;
+
 /**
  * Ressource associée aux paniers
  * (point d'accès de l'API REST)
@@ -27,8 +30,8 @@ public class PanierRessource {
      * Constructeur permettant d'initialiser le service avec une interface d'accès aux données
      * @param panierRepo objet implémentant l'interface d'accès aux données
      */
-    public @Inject PanierRessource(PanierRepositoryInterface panierRepo, ProduitClientInterface produitClient) {
-        this.service = new PanierService(panierRepo, produitClient);
+    public @Inject PanierRessource(PanierRepositoryInterface panierRepo, ProduitsUtilisateursRepositoryInterface produitRepo) {
+        this.service = new PanierService(panierRepo, produitRepo);
     }
 
     /**
@@ -38,19 +41,21 @@ public class PanierRessource {
         this.service = service;
     }
 
+    /**
+     * Endpoint qui récupère tous les paniers disponibles dans la base
+     * @return la liste des paniers
+     */
     @GET
     @Produces("application/json")
     public String getAllPaniers() {
         return service.getAllPaniersJSON();
     }
 
-    @GET
-    @Path("coucou")
-    @Produces("application/json")
-    public String getAllProduits() {
-        return service.getAllProduitsJSON();
-    }
-
+    /**
+     * Endpoint qui récupère un panier avec son identifiant
+     * @param id_panier identifiant du panier
+     * @return Le panier avec ses produits
+     */
     @GET
     @Path("{reference}")
     @Produces("application/json")
@@ -77,5 +82,28 @@ public class PanierRessource {
             return Response.ok("updated").build();
     }
 
+    @DELETE
+    @Path("/{id_panier}/produits/{id_produit}")
+    public Response deleteProduitFromPanier(@PathParam("id_panier") int id_panier,
+                                            @PathParam("id_produit") int id_produit) {
+
+        if( !service.deleteProduitFromPanier(id_panier, id_produit) )
+            throw new NotFoundException();
+        else
+            return Response.ok("deleted").build();
+    }
+
+    @PUT
+    @Path("/{id_panier}/produits/{id_produit}")
+    @Consumes("application/json")
+    public Response addProduitToPanier(@PathParam("id_panier") int id_panier,
+                                       @PathParam("id_produit") int id_produit,
+                                        Map<String, Integer> body) {
+        int quantite = body.getOrDefault("quantite", 1);
+        if( !service.addProduitToPanier(id_panier, id_produit, quantite) )
+            throw new NotFoundException();
+        else
+            return Response.ok("added").build();
+    }
 
 }

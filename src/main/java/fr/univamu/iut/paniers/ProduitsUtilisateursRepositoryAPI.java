@@ -1,10 +1,26 @@
 package fr.univamu.iut.paniers;
 
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+
+import javax.print.attribute.standard.Media;
 import java.io.Closeable;
 import java.util.ArrayList;
 
 public class ProduitsUtilisateursRepositoryAPI implements Closeable, ProduitsUtilisateursRepositoryInterface {
 
+    /**
+     * URL de l'API des produits et utilisateurs
+     */
+    String url;
+
+    public ProduitsUtilisateursRepositoryAPI(String url) {
+        this.url = url;
+    }
 
     /**
      * Méthode retournant le produit dont la référence est passée en paramètre
@@ -14,7 +30,19 @@ public class ProduitsUtilisateursRepositoryAPI implements Closeable, ProduitsUti
      */
     @Override
     public Produit getProduit(int id) {
-        return null;
+        Produit myProduit = null;
+
+        Client client = ClientBuilder.newClient();
+        WebTarget target = client.target(url);
+        WebTarget targetEndpoint = target.path("produits/" + id);
+        Response response = targetEndpoint.request(MediaType.APPLICATION_JSON).get();
+
+        if (response.getStatus() == 200) {
+            myProduit = response.readEntity(Produit.class);
+        }
+
+        client.close();
+        return myProduit;
     }
 
     /**
@@ -38,7 +66,21 @@ public class ProduitsUtilisateursRepositoryAPI implements Closeable, ProduitsUti
      */
     @Override
     public boolean updateProduit(int id, String nom, int quantite, String unite) {
-        return false;
+        boolean result = false;
+
+        Produit updatedProduit = new Produit(id, nom, quantite, unite);
+        Client client = ClientBuilder.newClient();
+        WebTarget target = client.target(url);
+        WebTarget targetEndpoint = target.path("produits/" + id);
+        Response response = targetEndpoint.request(MediaType.APPLICATION_JSON)
+                .put(Entity.entity(updatedProduit, MediaType.APPLICATION_JSON));
+
+        if (response.getStatus() == 200) {
+            result = true;
+        }
+
+        client.close();
+        return result;
     }
 
     /**
@@ -124,16 +166,6 @@ public class ProduitsUtilisateursRepositoryAPI implements Closeable, ProduitsUti
 
     /**
      * Closes this stream and releases any system resources associated
-     * with it. If the stream is already closed then invoking this
-     * method has no effect.
-     *
-     * <p> As noted in {@link AutoCloseable#close()}, cases where the
-     * close may fail require careful attention. It is strongly advised
-     * to relinquish the underlying resources and to internally
-     * <em>mark</em> the {@code Closeable} as closed, prior to throwing
-     * the {@code IOException}.
-     *
-     * @throws IOException if an I/O error occurs
      */
     @Override
     public void close() {
