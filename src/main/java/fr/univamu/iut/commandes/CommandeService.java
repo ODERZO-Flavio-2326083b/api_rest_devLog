@@ -39,7 +39,7 @@ public class CommandeService {
      * @return true si l'ajout a bien été effectué, false sinon
      */
     public boolean addCommande(Commande commande) {
-        return commandRepo.addCommande(commande.id_utilisateur, commande.date_retrait, commande.id_paniers);
+        return commandRepo.addCommande(commande.id_utilisateur, commande.date_retrait, commande.id_paniers, commande.relai);
     }
 
     /**
@@ -99,7 +99,7 @@ public class CommandeService {
      * @return true si la commande à pu être mise à jour
      */
     public boolean udpateCommande(int id_commande, Commande commande) {
-        return commandRepo.updateCommande(id_commande, commande.id_utilisateur, commande.date_retrait);
+        return commandRepo.updateCommande(id_commande, commande.id_utilisateur, commande.date_retrait, commande.relai);
     }
 
     /**

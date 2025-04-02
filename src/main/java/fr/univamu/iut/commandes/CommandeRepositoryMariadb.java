@@ -40,8 +40,8 @@ public class CommandeRepositoryMariadb implements CommandeRepositoryInterface, C
     }
 
     @Override
-    public boolean addCommande(int id_utilisateur, Date date_retrait, List<Integer> id_paniers) {
-        String query = "INSERT INTO Commande (id_utilisateur, date_retrait) VALUES (?,?)";
+    public boolean addCommande(int id_utilisateur, Date date_retrait, List<Integer> id_paniers, String relai) {
+        String query = "INSERT INTO Commande (id_utilisateur, date_retrait, relai) VALUES (?,?,?)";
 
         int rowsAffected;
         int idCommande = 0;
@@ -51,6 +51,7 @@ public class CommandeRepositoryMariadb implements CommandeRepositoryInterface, C
         try (PreparedStatement ps = dbConnection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, id_utilisateur);
             ps.setDate(2, date_retrait);
+            ps.setString(3, relai);
 
             rowsAffected = ps.executeUpdate();
 
@@ -108,8 +109,9 @@ public class CommandeRepositoryMariadb implements CommandeRepositoryInterface, C
             if (result.next()) {
                 int id_utilisateur = result.getInt("id_utilisateur");
                 Date date_retrait = result.getDate("date_retrait");
+                String relai = result.getString("relai");
 
-                selectedCommande = new Commande(id_commande, id_utilisateur, date_retrait);
+                selectedCommande = new Commande(id_commande, id_utilisateur, date_retrait, relai);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -150,8 +152,9 @@ public class CommandeRepositoryMariadb implements CommandeRepositoryInterface, C
                 int id_commande = result.getInt("id_commande");
                 int id_utilisateur = result.getInt("id_utilisateur");
                 Date date_retrait = result.getDate("date_retrait");
+                String relai = result.getString("relai");
 
-                Commande currentCommande = new Commande(id_commande, id_utilisateur, date_retrait);
+                Commande currentCommande = new Commande(id_commande, id_utilisateur, date_retrait, relai);
 
                 listCommandes.add(currentCommande);
             }
@@ -162,14 +165,15 @@ public class CommandeRepositoryMariadb implements CommandeRepositoryInterface, C
     }
 
     @Override
-    public boolean updateCommande(int id_commande, int id_utilisateur, java.sql.Date date_retrait) {
-        String query = "UPDATE Commande SET id_utilisateur=?, date_retrait=? WHERE id_commande=?";
+    public boolean updateCommande(int id_commande, int id_utilisateur, java.sql.Date date_retrait, String relai) {
+        String query = "UPDATE Commande SET id_utilisateur=?, date_retrait=?, relai=? WHERE id_commande=?";
         int nbRowModified = 0;
 
         try (PreparedStatement ps = dbConnection.prepareStatement(query)) {
             ps.setString(1, Integer.toString(id_utilisateur));
             ps.setDate(2, date_retrait);
             ps.setString(3, Integer.toString(id_commande));
+            ps.setString(4, relai);
 
             nbRowModified = ps.executeUpdate();
         } catch (SQLException e) {

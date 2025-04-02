@@ -24,6 +24,11 @@ public class Commande {
     protected java.sql.Date date_retrait;
 
     /**
+     * Relai pour récupérer la commande
+     */
+    protected String relai;
+
+    /**
      * Liste des paniers contenus dans la commande
      */
     protected List<Panier> paniers;
@@ -46,11 +51,12 @@ public class Commande {
      * @param id_utilisateur id de l'utilisateur qui a passé la commande
      * @param date_retrait date de retrait de la commande
      */
-    public Commande(int id_commande, int id_utilisateur, java.sql.Date date_retrait)
+    public Commande(int id_commande, int id_utilisateur, java.sql.Date date_retrait, String relai)
     {
         this.id_commande = id_commande;
         this.id_utilisateur = id_utilisateur;
         this.date_retrait = date_retrait;
+        this.relai = relai;
     }
 
     /**
@@ -86,6 +92,14 @@ public class Commande {
     }
 
     /**
+     * Méthode permettant de récupérer le relai de commande
+     * @return un String correspondant au relai
+     */
+    public String getRelai() {
+        return relai;
+    }
+
+    /**
      * Méthode permettant d'accéder à la liste des paniers liés à la commande
      * @return une liste correspondant aux paniers liés à la commande
      */
@@ -115,6 +129,14 @@ public class Commande {
      */
     public void setDate_retrait(java.sql.Date date_retrait) {
         this.date_retrait = date_retrait;
+    }
+
+    /**
+     * Méthode permettant de modifier le relai de livraison de la commande
+     * @param relai un String correspondant au nouveau relai
+     */
+    public void setRelai(String relai) {
+        this.relai = relai;
     }
 
     /**
