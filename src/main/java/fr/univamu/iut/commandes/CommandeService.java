@@ -33,6 +33,11 @@ public class CommandeService {
         }
     }
 
+    /**
+     * Méthode ajoutant une nouvelle commande à la base de données
+     * @param commande la commande à ajouter
+     * @return true si l'ajout a bien été effectué, false sinon
+     */
     public boolean addCommande(Commande commande) {
         return commandRepo.addCommande(commande.id_utilisateur, commande.date_retrait, commande.id_paniers);
     }
@@ -97,14 +102,32 @@ public class CommandeService {
         return commandRepo.updateCommande(id_commande, commande.id_utilisateur, commande.date_retrait);
     }
 
+    /**
+     * Méthode permettant d'ajouter un panier à une commande
+     * @param id_commande l'id de la commande à laquelle ajouter un panier
+     * @param id_panier l'id du panier à ajouter à la commande
+     * @param quantite la nouvelle quantité de paniers dans la commande
+     * @return true si l'ajout a bien été effectué, false sinon
+     */
     public boolean addPanierToCommande(int id_commande, int id_panier, int quantite) {
         return commandRepo.updatePanierOfCommande(id_commande, id_panier, quantite);
     }
 
+    /**
+     * Méthode permettant de retirer un panier d'une commande
+     * @param id_commande l'id de la commande dont on veut retirer le panier
+     * @param id_panier l'id du panier à retirer de la commande
+     * @return true si l'ajout a bien été effectué, false sinon
+     */
     public boolean deletePanierFromCommande(int id_commande, int id_panier) {
         return commandRepo.deletePanierFromCommande(id_commande, id_panier);
     }
 
+    /**
+     * Méthode permettant de supprimer une commande
+     * @param id_commande l'id de la commande à supprimer
+     * @return true si la commande a bien été supprimée, false sinon
+     */
     public boolean deleteCommande(int id_commande) {
         return commandRepo.deleteCommande(id_commande);
     }

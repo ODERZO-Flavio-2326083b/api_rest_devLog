@@ -37,8 +37,8 @@ public class CommandeResource {
     }
 
     /**
-     * Constructeur permettant d'initialiser le service d'accès aux livres
-     * @param service le service d'accès aux livres
+     * Constructeur permettant d'initialiser le service d'accès aux commandes
+     * @param service le service d'accès aux commandes
      */
     public CommandeResource (CommandeService service)
     {
@@ -55,6 +55,11 @@ public class CommandeResource {
         return service.getAllCommandsJSON();
     }
 
+    /**
+     * Endpoint permettant d'ajouter une commande
+     * @param commande la commande à ajouter
+     * @return une réponse "added" si l'ajout a bien été effectué, une erreur NotFound sinon
+     */
     @POST
     @Consumes("application/json")
     public Response addCommande(Commande commande) {
@@ -83,7 +88,7 @@ public class CommandeResource {
     }
 
     /**
-     * Endpoint permettant de mettre à jour le statu d'un livre uniquement
+     * Endpoint permettant de mettre à jour le statu d'une commande uniquement
      * @param id_commande l'id de la commande dont il faut changer le statut
      * @param commande la commande transmie en HTTP au format JSON et convertie en objet Commande
      * @return une réponse "updated" si la mise à jour a bien été effectuée, une erreur NotFound sinon
@@ -98,6 +103,13 @@ public class CommandeResource {
             return Response.ok("updated").build();
     }
 
+    /**
+     * Méthode permettant de créer une liaison entre un panier et une commande
+     * @param id_commande l'id de la commande à lier
+     * @param id_panier l'id du panier à lier à la commande
+     * @param body la quantité de paniers déjà liés à la commande
+     * @return une réponse "added" si l'ajout a bien été effectué, une erreur NotFound sinon
+     */
     @PUT
     @Path("/{id_commande}/paniers/{id_panier}")
     @Consumes("application/json")
@@ -111,6 +123,12 @@ public class CommandeResource {
             return Response.ok("added").build();
     }
 
+    /**
+     * Méthode permettant de retirer la lisaison entre un panier et une commande
+     * @param id_commande l'id de la commande
+     * @param id_panier l'id du panier
+     * @return une réponse "deleted" si la suppression a bien été effectuée, une erreur NotFound sinon
+     */
     @DELETE
     @Path("{id_commande}/paniers/{id_panier}")
     public Response deletePanierFromCommande(@PathParam("id_commande") int id_commande,
@@ -121,6 +139,11 @@ public class CommandeResource {
             return Response.ok("deleted").build();
     }
 
+    /**
+     * Méthode permettant de supprimer une commande
+     * @param id_commande l'id de la commande à supprimer
+     * @return une réponse "deleted" si la suppression a bien été effectuée, une erreur NotFound sinon
+     */
     @DELETE
     @Path("{id_commande}")
     public Response deleteCommande(@PathParam("id_commande") int id_commande) {

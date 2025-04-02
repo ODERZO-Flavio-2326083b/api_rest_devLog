@@ -23,6 +23,9 @@ public class Commande {
      */
     protected java.sql.Date date_retrait;
 
+    /**
+     * Liste des paniers contenus dans la commande
+     */
     protected List<Panier> paniers;
 
     /**
@@ -74,8 +77,10 @@ public class Commande {
         return date_retrait;
     }
 
-
-
+    /**
+     * Méthode permettant de récupérer la liste des paniers contenus dans la commande
+     * @return une liste de Panier
+     */
     public List<Panier> getPaniers() {
         return paniers;
     }
@@ -112,6 +117,10 @@ public class Commande {
         this.date_retrait = date_retrait;
     }
 
+    /**
+     * Méthode permettant de modifier les paniers contenus dans la commande
+     * @param paniers une liste de Panier
+     */
     public void setPaniers(List<Panier> paniers) {
         this.paniers = paniers;
     }
