@@ -2,7 +2,6 @@ package fr.univamu.iut.commandes;
 
 import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbBuilder;
-import jakarta.ws.rs.NotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +31,10 @@ public class CommandeService {
         if (commandRepo == null) {
             System.err.println("Erreur : commandRepo est null !");
         }
+    }
+
+    public boolean addCommande(Commande commande) {
+        return commandRepo.addCommande(commande.id_utilisateur, commande.date_retrait, commande.id_paniers);
     }
 
     /**
@@ -100,5 +103,9 @@ public class CommandeService {
 
     public boolean deletePanierFromCommande(int id_commande, int id_panier) {
         return commandRepo.deletePanierFromCommande(id_commande, id_panier);
+    }
+
+    public boolean deleteCommande(int id_commande) {
+        return commandRepo.deleteCommande(id_commande);
     }
 }

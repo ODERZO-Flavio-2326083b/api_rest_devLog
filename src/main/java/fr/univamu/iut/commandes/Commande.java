@@ -26,6 +26,11 @@ public class Commande {
     protected List<Panier> paniers;
 
     /**
+     * Liste des ids des paniers liés à la commande
+     */
+    protected List<Integer> id_paniers;
+
+    /**
      * Constructeur par défaut
      */
     public Commande()
@@ -69,8 +74,18 @@ public class Commande {
         return date_retrait;
     }
 
+
+
     public List<Panier> getPaniers() {
         return paniers;
+    }
+
+    /**
+     * Méthode permettant d'accéder à la liste des paniers liés à la commande
+     * @return une liste correspondant aux paniers liés à la commande
+     */
+    public List<Integer> getId_paniers() {
+        return id_paniers;
     }
 
     /**
@@ -90,8 +105,8 @@ public class Commande {
     }
 
     /**
-     * Méthode permettant de modifier l'id de la commande
-     * @param date_retrait une Date correspondant au nouvel id de la commande
+     * Méthode permettant de modifier a date de retrait de la commande
+     * @param date_retrait une Date correspondant à la nouvelle date de retrait la commande
      */
     public void setDate_retrait(java.sql.Date date_retrait) {
         this.date_retrait = date_retrait;
@@ -99,6 +114,14 @@ public class Commande {
 
     public void setPaniers(List<Panier> paniers) {
         this.paniers = paniers;
+    }
+
+    /**
+     * Méthode permettant de modifier la liste des paniers associés à la commande
+     * @param id_paniers une liste contenant les nouveaux paniers associés à la commande
+     */
+    public void setId_paniers(List<Integer> id_paniers) {
+        this.id_paniers = id_paniers;
     }
 
     @Override

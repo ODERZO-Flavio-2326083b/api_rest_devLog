@@ -3,6 +3,7 @@ package fr.univamu.iut.commandes;
 import java.io.Closeable;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -36,6 +37,60 @@ public class CommandeRepositoryMariadb implements CommandeRepositoryInterface, C
         catch (SQLException e) {
             System.err.println(e.getMessage());
         }
+    }
+
+    @Override
+    public boolean addCommande(int id_utilisateur, Date date_retrait, List<Integer> id_paniers) {
+        String query = "INSERT INTO Commandes (id_utilisateur, date_retrait) VALUES (?,?,?)";
+
+        int rowsAffected;
+        int idCommande = 0;
+        Calendar today = Calendar.getInstance();
+        today.set(Calendar.HOUR_OF_DAY, 0);
+
+        try (PreparedStatement ps = dbConnection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setInt(1, id_utilisateur);
+            ps.setDate(2, date_retrait);
+
+            rowsAffected = ps.executeUpdate();
+
+            if (rowsAffected > 0) {
+                try (ResultSet rs = ps.getGeneratedKeys()) {
+                    if (rs.next())
+                        idCommande = rs.getInt(1);
+                }
+            }
+
+            // liaison des paniers à la commande
+            if (idCommande != 0) {
+                for (Integer idPanier : id_paniers) {
+                    rowsAffected += addPanierToCommande(idCommande, idPanier, 1) ? 1 : 0;
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return rowsAffected != 0;
+    }
+
+    private boolean addPanierToCommande(int id_commande, int id_panier, int quantite) {
+        String query = "INSERT INTO ComposeCommande (id_commande, id_panier, quantite) VALUES (?,?,?)" +
+                " ON DUPLICATE KEY UPDATE quantite = ?";
+
+        int rowsAffected = 0;
+
+        try (PreparedStatement ps = dbConnection.prepareStatement(query)) {
+            ps.setInt(1, id_commande);
+            ps.setInt(2, id_panier);
+            ps.setInt(3, quantite);
+
+            rowsAffected = ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return rowsAffected != 0;
     }
 
     @Override
@@ -171,5 +226,22 @@ public class CommandeRepositoryMariadb implements CommandeRepositoryInterface, C
         }
 
         return (rowsAffected != 0);
+    }
+
+    @Override
+    public boolean deleteCommande(int id_commande) {
+        String query = "DELETE FROM Commande WHERE id_panier=?";
+
+        int nbRowModified = 0;
+
+        try (PreparedStatement ps = dbConnection.prepareStatement(query)) {
+            ps.setString(1, String.valueOf(id_commande));
+
+            nbRowModified = ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return (nbRowModified != 0);
     }
 }

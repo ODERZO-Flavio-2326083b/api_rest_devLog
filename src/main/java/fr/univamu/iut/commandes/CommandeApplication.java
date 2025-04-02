@@ -10,6 +10,10 @@ import jakarta.ws.rs.core.Application;
 @ApplicationScoped
 public class CommandeApplication extends Application {
 
+    /**
+     * Méthode appelée par l'API CDI pour injecter l'API Paniers au moment de la création de la ressource
+     * @return une instance de l'API avec l'url à utiliser
+     */
     @Produces
     private PanierRepositoryInterface connectPanierApi(){
         return new PanierRepositoryAPI("http://localhost:8080/paniers-1.0-SNAPSHOT/api/");
@@ -41,6 +45,10 @@ public class CommandeApplication extends Application {
         commandeRepo.close();
     }
 
+    /**
+     * Méthode permettant de fermer la connexion avec l'API Paniers lorsque l'application est arrêtée
+     * @param panierRepo la connexion à l'API instanciée dans la méthode @connectPanierApi
+     */
     private void closePanierApi(@Disposes PanierRepositoryInterface panierRepo) {
         panierRepo.close();
     }

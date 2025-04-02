@@ -55,6 +55,15 @@ public class CommandeResource {
         return service.getAllCommandsJSON();
     }
 
+    @POST
+    @Consumes("application/json")
+    public Response addCommande(Commande commande) {
+        if (!service.addCommande(commande))
+            throw new NotFoundException();
+        else
+            return Response.ok("added").build();
+    }
+
     /**
      * Endpoint permettant de publier les informations d'une commande dont l'id est passé en paramètre
      * @param id_commande l'id de la commande recherchée
@@ -107,6 +116,15 @@ public class CommandeResource {
     public Response deletePanierFromCommande(@PathParam("id_commande") int id_commande,
                                              @PathParam("id_panier") int id_panier) {
         if (!service.deletePanierFromCommande(id_commande, id_panier))
+            throw new NotFoundException();
+        else
+            return Response.ok("deleted").build();
+    }
+
+    @DELETE
+    @Path("{id_commande}")
+    public Response deleteCommande(@PathParam("id_commande") int id_commande) {
+        if (!service.deleteCommande(id_commande))
             throw new NotFoundException();
         else
             return Response.ok("deleted").build();
