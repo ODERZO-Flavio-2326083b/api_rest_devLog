@@ -33,6 +33,11 @@ public class Panier {
      */
     protected List<Produit> produits;
 
+    /**
+     * Liste des ids produits composant le panier
+     */
+    protected List<Integer> id_produits;
+
     public Panier() {}
 
     public Panier(int id_panier, float prix, int qtt_panier_dispo, Date derniere_maj) {
@@ -76,6 +81,14 @@ public class Panier {
 
     public void setProduits(List<Produit> produits) {
         this.produits = produits;
+    }
+
+    public List<Integer> getId_produits() {
+        return id_produits;
+    }
+
+    public void setId_produits(List<Integer> id_produits) {
+        this.id_produits = id_produits;
     }
 
     public List<Produit> getProduits() {

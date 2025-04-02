@@ -37,6 +37,10 @@ public class PanierApplication extends Application {
         PanierRepo.close();
     }
 
+    /**
+     * Méthode ouvrant la connexion à l'API des utilisateurs/produits et l'injectant au service
+     * @return un objet implémentant l'interface ProduitsUtilisateursRepositoryInterface
+     */
     @Produces
     private ProduitsUtilisateursRepositoryInterface openProduitClient() {
         return new ProduitsUtilisateursRepositoryAPI("http://localhost:8080/produitsutilisateurs-1.0-SNAPSHOT/api/");

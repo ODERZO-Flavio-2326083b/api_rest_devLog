@@ -1,7 +1,6 @@
 package fr.univamu.iut.paniers;
 
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbBuilder;
 
@@ -32,6 +31,15 @@ public class PanierService {
     public PanierService(PanierRepositoryInterface panierRepo, ProduitsUtilisateursRepositoryInterface produitRepo) {
         this.panierRepo = panierRepo;
         this.produitRepo = produitRepo;
+    }
+
+    /**
+     * Méthode permettant d'ajouter un panier à la base de données
+     * @param panier Objet panier contenant les informations
+     * @return true si l'ajout a été effectué, false sinon
+     */
+    public boolean addPanier(Panier panier) {
+        return panierRepo.addPanier(panier.prix, panier.qtt_panier_dispo, panier.id_produits);
     }
 
     /**
@@ -87,12 +95,21 @@ public class PanierService {
 
     /**
      * Méthode permettant de mettre à jours les informations d'un panier
-     * @param id_panier référence du panier à mettre à jours
+     * @param id_panier id du panier à mettre à jours
      * @param panier les nouvelles infromations a utiliser
      * @return true si le panier a pu être mis à jours
      */
     public boolean updatePanier(int id_panier, Panier panier) {
         return panierRepo.updatePanier(id_panier, panier.prix, panier.qtt_panier_dispo);
+    }
+
+    /**
+     * Méthode permettant de supprimer un panier du repo
+     * @param id_panier id du panier à supprimer
+     * @return true si le panier a bien été supprimé
+     */
+    public boolean deletePanier(int id_panier) {
+        return panierRepo.deletePanier(id_panier);
     }
 
     /**
@@ -112,6 +129,17 @@ public class PanierService {
      * @return true si le produit a été ajouté
      */
     public boolean addProduitToPanier(int id_panier, int id_produit, int quantite) {
+        return panierRepo.addProduitToPanier(id_panier, id_produit, quantite);
+    }
+
+    /**
+     * Méthode permettant de changer la quantité d'un produit dans un panier
+     * @param id_panier id du panier concerné
+     * @param id_produit id du produit concerné
+     * @param quantite nouvelle quantité
+     * @return true si le changement a été effectué
+     */
+    public boolean updateProduitOfPanier(int id_panier, int id_produit, int quantite) {
         return panierRepo.updateProduitOfPanier(id_panier, id_produit, quantite);
     }
 }

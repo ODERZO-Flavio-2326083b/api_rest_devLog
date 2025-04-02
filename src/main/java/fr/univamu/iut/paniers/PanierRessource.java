@@ -5,7 +5,6 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Response;
 
-import java.lang.annotation.Repeatable;
 import java.util.Map;
 
 /**
@@ -34,11 +33,18 @@ public class PanierRessource {
         this.service = new PanierService(panierRepo, produitRepo);
     }
 
-    /**
-     * Constructeur permettant d'initialiser le service d'accès aux paniers
+    /** Endpoint qui permet d'ajouter un panier au repo
+     * les informations nécessaires sont : prix: float, qtt_panier_dispo: int et id_produits: int[]
+     * @param panier objet panier à ajouter au repo
+     * @return "added" si le panier a été ajouté, une erreur sinon
      */
-    public PanierRessource( PanierService service ){
-        this.service = service;
+    @POST
+    @Consumes("application/json")
+    public Response addPanier(Panier panier) {
+        if( ! service.addPanier(panier) )
+            throw new NotFoundException();
+        else
+            return Response.ok("added").build();
     }
 
     /**
@@ -57,9 +63,9 @@ public class PanierRessource {
      * @return Le panier avec ses produits
      */
     @GET
-    @Path("{reference}")
+    @Path("{id_panier}")
     @Produces("application/json")
-    public String getPanier( @PathParam("reference") int id_panier){
+    public String getPanier( @PathParam("id_panier") int id_panier){
 
         String result = service.getPanierJSON(id_panier);
 
@@ -70,10 +76,16 @@ public class PanierRessource {
         return result;
     }
 
+    /**
+     * Endpoint permettant de mettre à jour un panier en fonction de son id
+     * @param id_panier id du panier concerné
+     * @param panier nouvel objet panier qui contient les nouvelles données
+     * @return "updated" si le panier a été mis à jour, une erreur sinon
+     */
     @PUT
-    @Path("{reference}")
+    @Path("{id_panier}")
     @Consumes("application/json")
-    public Response updatePanier(@PathParam("reference") int id_panier, Panier panier ){
+    public Response updatePanier(@PathParam("id_panier") int id_panier, Panier panier ){
 
         // si le panier n'a pas été trouvé
         if( ! service.updatePanier(id_panier, panier) )
@@ -82,6 +94,27 @@ public class PanierRessource {
             return Response.ok("updated").build();
     }
 
+    /**
+     * Endpoint permettant de supprimer un panier en fonction de son id
+     * @param id_panier id du panier concerné
+     * @return "deleted" si le panier a été supprimé, une erreur sinon
+     */
+    @DELETE
+    @Path("{id_panier}")
+    public Response deletePanier(@PathParam("id_panier") int id_panier){
+
+        if (!service.deletePanier(id_panier))
+            throw new NotFoundException();
+        else
+            return Response.ok("deleted").build();
+    }
+
+    /**
+     * Endpoint permettant de supprimer un produit dans un panier en fonction de leurs ids
+     * @param id_panier id du panier concerné
+     * @param id_produit id du produit à supprimer
+     * @return "deleted" si le produit a été supprimé, une erreur sinon
+     */
     @DELETE
     @Path("/{id_panier}/produits/{id_produit}")
     public Response deleteProduitFromPanier(@PathParam("id_panier") int id_panier,
@@ -93,7 +126,15 @@ public class PanierRessource {
             return Response.ok("deleted").build();
     }
 
-    @PUT
+    /**
+     * Endpoint permettant d'ajouter un produit à un panier existant
+     * Si le produit existe déjà, la quantité sera simplement modifiée
+     * @param id_panier id du panier concerné
+     * @param id_produit id du produit à ajouter
+     * @param body body contenant la clé "quantité": int
+     * @return "added" si le produit a été ajouté, une erreur sinon
+     */
+    @POST
     @Path("/{id_panier}/produits/{id_produit}")
     @Consumes("application/json")
     public Response addProduitToPanier(@PathParam("id_panier") int id_panier,
@@ -104,6 +145,26 @@ public class PanierRessource {
             throw new NotFoundException();
         else
             return Response.ok("added").build();
+    }
+
+    /**
+     * Endpoint permettant de mettre à jour une quantité de produit sur un panier existant
+     * @param id_panier id du panier concerné
+     * @param id_produit id du produit à ajouter
+     * @param body body contenant la clé "quantité": int
+     * @return "updated" si le changement a été effectué, une erreur sinon
+     */
+    @PUT
+    @Path("/{id_panier}/produits/{id_produit}")
+    @Consumes("application/json")
+    public Response updateProduitOfPanier(@PathParam("id_panier") int id_panier,
+                                          @PathParam("id_produit") int id_produit,
+                                          Map<String, Integer> body) {
+        int quantite = body.get("quantite");
+        if(!service.updateProduitOfPanier(id_panier, id_produit, quantite))
+            throw new NotFoundException();
+        else
+            return Response.ok("updated").build();
     }
 
 }

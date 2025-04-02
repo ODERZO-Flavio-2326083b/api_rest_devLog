@@ -49,42 +49,4 @@ public interface ProduitsUtilisateursRepositoryInterface {
      * @param idProduit identifiant du produit
      * @return true si le produit a été supprimé, false sinon
      */
-    public boolean deleteProduit(int idProduit);
-
-    /**
-     * Méthode retournant l'utilisateur dont l'identifiant est passé en paramètre
-     * @param id identifiant de l'utilisateur recherché
-     * @return un objet Utilisateur représentant l'utilisateur recherché
-     */
-    public Utilisateur getUtilisateur(int id);
-
-    /**
-     * Méthode retournant la liste des utilisateurs enregistrés
-     * @return une liste d'objets Utilisateur
-     */
-    public ArrayList<Utilisateur> getAllUtilisateurs();
-
-    /**
-     * Méthode permettant de mettre à jour un utilisateur enregistré
-     * @param id identifiant de l'utilisateur à mettre à jour
-     * @param nouveauPseudo nouveau pseudo de l'utilisateur
-     * @param nouveauMdp nouveau mot de passe de l'utilisateur
-     * @return true si l'utilisateur existe et que la mise à jour a été effectuée, false sinon
-     */
-    public boolean updateUtilisateur(int id, String nouveauPseudo, String nouveauMdp);
-
-    /**
-     * Méthode permettant de créer un utilisateur
-     * @param pseudo pseudo de l'utilisateur
-     * @param mdp mot de passe de l'utilisateur
-     * @return l'identifiant de l'utilisateur créé
-     */
-    public int createUtilisateur(String pseudo, String mdp);
-
-    /**
-     * Méthode permettant de supprimer un utilisateur
-     * @param idUtilisateur identifiant de l'utilisateur
-     * @return true si l'association a été créée, false sinon
-     */
-    public boolean deleteUtilisateur(int idUtilisateur);
-}
+    public boolean deleteProduit(int idProduit);}

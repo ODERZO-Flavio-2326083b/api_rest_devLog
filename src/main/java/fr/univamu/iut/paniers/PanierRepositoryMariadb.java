@@ -6,6 +6,9 @@ import java.sql.*;
 import java.util.Calendar;
 import java.util.List;
 
+/**
+ * Implémentation de l'interface de PanierRepository pour MariaDB
+ */
 public class PanierRepositoryMariadb implements Closeable, PanierRepositoryInterface {
 
     /**
@@ -13,9 +16,53 @@ public class PanierRepositoryMariadb implements Closeable, PanierRepositoryInter
      */
     protected Connection dbConnection;
 
+    /**
+     * Constructeur de la classe
+     * @param infoConnection chaine de caractères avec les informations de connexion
+     * @param user chaine de caractères avec le nom d'utilisateur
+     * @param pwd chaine de caractères avec le mot de passe
+     */
     public PanierRepositoryMariadb(String infoConnection, String user, String pwd ) throws java.sql.SQLException, java.lang.ClassNotFoundException {
         Class.forName("org.mariadb.jdbc.Driver");
         dbConnection = DriverManager.getConnection( infoConnection, user, pwd ) ;
+    }
+
+    @Override
+    public boolean addPanier(float prix, int qtt_panier_dispo, List<Integer> id_produits) {
+        String query = "INSERT INTO Panier (prix, qtt_panier_dispo, derniere_maj) VALUES (?, ?, ?)";
+
+        int rowsAffected;
+        int idPanier = 0;
+        Calendar today = Calendar.getInstance();
+        today.set(Calendar.HOUR_OF_DAY, 0);
+
+        try (PreparedStatement ps = dbConnection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setFloat(1, prix);
+            ps.setInt(2, qtt_panier_dispo);
+            ps.setDate(3, Date.valueOf(java.time.LocalDate.now()));
+
+            rowsAffected = ps.executeUpdate();
+
+            if (rowsAffected > 0) {
+                try (ResultSet rs = ps.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        idPanier = rs.getInt(1);
+                    }
+                }
+            }
+
+            // liaison des produits au panier
+            if (idPanier != 0) {
+                for (Integer idProduit : id_produits) {
+                    rowsAffected += addProduitToPanier(idPanier, idProduit, 1) ? 1 : 0;
+                }
+
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return idPanier != 0 && rowsAffected != 0;
     }
 
     @Override
@@ -101,8 +148,25 @@ public class PanierRepositoryMariadb implements Closeable, PanierRepositoryInter
         try ( PreparedStatement ps = dbConnection.prepareStatement(query)) {
             ps.setString(1, String.valueOf(prix));
             ps.setString(2, String.valueOf(qtt_panier_dispo));
-            ps.setDate(3, Date.valueOf(java.time.LocalDate.now()));
             ps.setString(4, String.valueOf(id_panier));
+
+            nbRowModified = ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+
+        return (nbRowModified != 0 && changeLastUpdate(id_panier)) ;
+    }
+
+    @Override
+    public boolean deletePanier(int id_panier) {
+        String query = "DELETE FROM Panier WHERE id_panier=?";
+
+        int nbRowModified = 0;
+
+        try (PreparedStatement ps = dbConnection.prepareStatement(query)) {
+            ps.setString(1, String.valueOf(id_panier));
 
             nbRowModified = ps.executeUpdate();
         } catch (SQLException e) {
@@ -115,7 +179,7 @@ public class PanierRepositoryMariadb implements Closeable, PanierRepositoryInter
     @Override
     public boolean deleteProduitFromPanier(int id_panier, int id_produit) {
         String query = "DELETE FROM ComposePanier WHERE id_panier = ? AND id_produit = ?";
-        int rowsAffected;
+        int rowsAffected = 0;
         try (PreparedStatement ps = dbConnection.prepareStatement(query)) {
             ps.setInt(1, id_panier);
             ps.setInt(2, id_produit);
@@ -126,41 +190,66 @@ public class PanierRepositoryMariadb implements Closeable, PanierRepositoryInter
             throw new RuntimeException(e);
         }
 
-        return (rowsAffected != 0);
+        return (rowsAffected != 0 && changeLastUpdate(id_panier)) ;
     }
 
     @Override
-    public boolean updateProduitOfPanier(int id_panier, int id_produit, int quantite) {
-        String checkQuery = "SELECT quantite FROM ComposePanier WHERE id_panier = ? AND id_produit = ?";
-        String updateQuery = "UPDATE ComposePanier SET quantite = quantite + ? WHERE id_panier = ? AND id_produit = ?";
-        String insertQuery = "INSERT INTO ComposePanier (id_panier, id_produit, quantite) VALUES (?, ?, ?)";
+    public boolean addProduitToPanier(int id_panier, int id_produit, int quantite) {
+        String query = "INSERT INTO ComposePanier (id_panier, id_produit, quantite) " +
+                "VALUES (?, ?, ?) " +
+                "ON DUPLICATE KEY UPDATE quantite = ?";
 
-        int rowsAffected;
-        try (PreparedStatement checkStmt = dbConnection.prepareStatement(checkQuery)) {
-            checkStmt.setInt(1, id_panier);
-            checkStmt.setInt(2, id_produit);
-            ResultSet rs = checkStmt.executeQuery();
+        int rowsAffected = 0;
 
-            if (rs.next()) {
-                try (PreparedStatement updateStmt = dbConnection.prepareStatement(updateQuery)) {
-                    updateStmt.setInt(1, quantite);
-                    updateStmt.setInt(2, id_panier);
-                    updateStmt.setInt(3, id_produit);
-                    rowsAffected = updateStmt.executeUpdate();
-                }
-            } else {
-                try (PreparedStatement insertStmt = dbConnection.prepareStatement(insertQuery)) {
-                    insertStmt.setInt(1, id_panier);
-                    insertStmt.setInt(2, id_produit);
-                    insertStmt.setInt(3, quantite);
-                    rowsAffected = insertStmt.executeUpdate();
-                }
-            }
+        try (PreparedStatement ps = dbConnection.prepareStatement(query)) {
+            ps.setInt(1, id_panier);
+            ps.setInt(2, id_produit);
+            ps.setInt(3, quantite);
+            ps.setInt(4, quantite);
+
+            rowsAffected = ps.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
 
-        return (rowsAffected != 0);
+        return (rowsAffected != 0 && changeLastUpdate(id_panier));
+    }
+
+    @Override
+    public boolean updateProduitOfPanier(int id_panier, int id_produit, int quantite) {
+        String query = "UPDATE ComposePanier SET quantite = ? WHERE id_panier = ? AND id_produit = ?";
+
+        int rowsAffected = 0;
+        try (PreparedStatement ps = dbConnection.prepareStatement(query)) {
+            ps.setInt(1, quantite);
+            ps.setInt(2, id_panier);
+            ps.setInt(3, id_produit);
+
+            rowsAffected = ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return (rowsAffected != 0 && changeLastUpdate(id_panier));
+    }
+
+    public boolean changeLastUpdate(int id_panier) {
+        String query = "UPDATE Panier SET derniere_maj=? WHERE id_panier=?";
+
+        int nbRowModified = 0;
+        Calendar today = Calendar.getInstance();
+        today.set(Calendar.HOUR_OF_DAY, 0);
+
+        try ( PreparedStatement ps = dbConnection.prepareStatement(query)) {
+            ps.setDate(1, Date.valueOf(java.time.LocalDate.now()));
+            ps.setString(2, String.valueOf(id_panier));
+
+            nbRowModified = ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return (nbRowModified != 0);
     }
 
     @Override
