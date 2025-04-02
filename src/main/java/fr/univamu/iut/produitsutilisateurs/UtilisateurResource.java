@@ -61,9 +61,8 @@ public class UtilisateurResource {
 
     /**
      * Endpoint permettant de mettre à jour les informations d'un utilisateur.
-     * (La requête PUT doit fournir les nouvelles informations de l'utilisateur, les autres données sont ignorées)
      * @param id identifiant de l'utilisateur à mettre à jour
-     * @param utilisateur l'utilisateur transmis au format JSON et converti en objet Utilisateur
+     * @param utilisateur l'utilisateur transmis au format JSON est converti en objet Utilisateur
      * @return une réponse "updated" si la mise à jour a été effectuée, une erreur NotFound sinon
      */
     @PUT

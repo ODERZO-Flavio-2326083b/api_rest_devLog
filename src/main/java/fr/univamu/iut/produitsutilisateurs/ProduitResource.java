@@ -59,18 +59,17 @@ public class ProduitResource {
     }
 
     /**
-     * Endpoint permettant de mettre à jours le statut d'un produit uniquement
-     * (la requête patch doit fournir le nouveau statut sur produit, les autres informations sont ignorées)
-     * @param id la référence du produit dont il faut changer le statut
-     * @param Produit le produit transmis en HTTP au format JSON et convertit en objet Produit
+     * Endpoint permettant de mettre à jour un produit
+     * @param id l'id du produit
+     * @param produit le produit transmis en HTTP au format JSON et convertit en objet Produit
      * @return une réponse "updated" si la mise à jour a été effectuée, une erreur NotFound sinon
      */
     @PUT
     @Path("{id}")
     @Consumes("application/json")
-    public Response updateProduit(@PathParam("id") int id, Produit Produit) {
+    public Response updateProduit(@PathParam("id") int id, Produit produit) {
         // si le produit n'a pas été trouvé
-        if(!service.updateProduit(id, Produit))
+        if(!service.updateProduit(id, produit))
             throw new NotFoundException();
         else
             return Response.ok("updated").build();
@@ -78,7 +77,7 @@ public class ProduitResource {
 
     /**
      * Endpoint permettant de créer un produit
-     * @param produit le produit transmis en HTTP au format JSON et convertit en objet Produit
+     * @param produit le produit transmis en HTTP au format JSON et converti en objet Produit
      * @return une réponse "created" si le produit a été créé, une erreur NotFound sinon
      */
     @POST

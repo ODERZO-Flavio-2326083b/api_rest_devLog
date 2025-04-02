@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 /**
  * Classe utilisée pour récupérer les informations nécessaires à la ressource
- * (permet de dissocier ressource et mode d'éccès aux données)
+ * (permet de dissocier ressource et mode d'accès aux données)
  */
 public class ProduitService {
     /**
