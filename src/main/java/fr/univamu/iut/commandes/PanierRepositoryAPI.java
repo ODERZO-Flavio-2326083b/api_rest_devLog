@@ -39,11 +39,8 @@ public class PanierRepositoryAPI implements PanierRepositoryInterface {
         Panier myPanier = null;
 
         Client client = ClientBuilder.newClient();
-
         WebTarget panierResource = client.target(url);
-
         WebTarget panierEndpoint = panierResource.path("paniers/" + id_panier);
-
         Response response = panierEndpoint.request(MediaType.APPLICATION_JSON).get();
 
         if (response.getStatus() == 200) {
@@ -55,6 +52,7 @@ public class PanierRepositoryAPI implements PanierRepositoryInterface {
 
                 myPanier = new Panier();
                 myPanier.setId_panier(jsonObject.getInt("id_panier"));
+                myPanier.setQtt_panier_dispo(jsonObject.getInt("qtt_panier_dispo"));
 
                 String dateStr = jsonObject.getString("derniere_maj");
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -88,7 +86,6 @@ public class PanierRepositoryAPI implements PanierRepositoryInterface {
         Client client = ClientBuilder.newClient();
 
         WebTarget panierResource = client.target(url);
-
         WebTarget panierEndpoint = panierResource.path("paniers/" + id_panier);
 
         Response response = panierEndpoint.request(MediaType.APPLICATION_JSON)
