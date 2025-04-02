@@ -41,7 +41,7 @@ public class CommandeRepositoryMariadb implements CommandeRepositoryInterface, C
 
     @Override
     public boolean addCommande(int id_utilisateur, Date date_retrait, List<Integer> id_paniers) {
-        String query = "INSERT INTO Commandes (id_utilisateur, date_retrait) VALUES (?,?,?)";
+        String query = "INSERT INTO Commande (id_utilisateur, date_retrait) VALUES (?,?)";
 
         int rowsAffected;
         int idCommande = 0;
@@ -84,6 +84,7 @@ public class CommandeRepositoryMariadb implements CommandeRepositoryInterface, C
             ps.setInt(1, id_commande);
             ps.setInt(2, id_panier);
             ps.setInt(3, quantite);
+            ps.setInt(4, quantite);
 
             rowsAffected = ps.executeUpdate();
         } catch (SQLException e) {
@@ -230,14 +231,24 @@ public class CommandeRepositoryMariadb implements CommandeRepositoryInterface, C
 
     @Override
     public boolean deleteCommande(int id_commande) {
-        String query = "DELETE FROM Commande WHERE id_panier=?";
+        String query = "DELETE FROM ComposeCommande WHERE id_commande = ?";
 
         int nbRowModified = 0;
 
         try (PreparedStatement ps = dbConnection.prepareStatement(query)) {
             ps.setString(1, String.valueOf(id_commande));
 
-            nbRowModified = ps.executeUpdate();
+            nbRowModified += ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        query = "DELETE FROM Commande WHERE id_commande=?";
+
+        try (PreparedStatement ps = dbConnection.prepareStatement(query)) {
+            ps.setString(1, String.valueOf(id_commande));
+
+            nbRowModified += ps.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
