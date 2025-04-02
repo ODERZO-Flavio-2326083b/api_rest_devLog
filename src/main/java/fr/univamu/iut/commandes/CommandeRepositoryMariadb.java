@@ -3,6 +3,7 @@ package fr.univamu.iut.commandes;
 import java.io.Closeable;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Classe permettant d'accéder aux livres stockés dans une base de données Mariadb
@@ -62,6 +63,24 @@ public class CommandeRepositoryMariadb implements CommandeRepositoryInterface, C
         return selectedCommande;
     }
 
+    public List<Integer> getPanierIdsOfCommandes(int id_commande) {
+        List<Integer> panierIds = new ArrayList<>();
+        String query = "SELECT id_panier FROM ComposeCommande WHERE id_commande = ?";
+
+        try (PreparedStatement ps = dbConnection.prepareStatement(query)){
+            ps.setInt(1, id_commande);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                panierIds.add(rs.getInt("id_panier"));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return panierIds;
+    }
+
     @Override
     public ArrayList<Commande> getAllCommandes() {
         ArrayList<Commande> listCommandes;
@@ -104,5 +123,55 @@ public class CommandeRepositoryMariadb implements CommandeRepositoryInterface, C
         }
 
         return (nbRowModified != 0);
+    }
+
+    public boolean updatePanierOfCommande(int id_commande, int id_panier, int quantite) {
+        String checkQuery = "SELECT quantite FROM ComposeCommande WHERE id_commande = ? AND id_panier = ?";
+        String updateQuery = "UPDATE ComposeCommande SET quantite = ? WHERE id_commande = ? AND id_panier = ?";
+        String insertQuery = "INSERT INTO ComposePanier (id_commande, id_panier, quantite) VALUES (?, ?, ?)";
+
+        int rowsAffected;
+        try (PreparedStatement checkStmt = dbConnection.prepareStatement(checkQuery)) {
+            checkStmt.setInt(1, id_panier);
+            checkStmt.setInt(2, id_commande);
+            ResultSet rs = checkStmt.executeQuery();
+
+            if (rs.next()) {
+                try (PreparedStatement updateStmt = dbConnection.prepareStatement(updateQuery)) {
+                    updateStmt.setInt(1, quantite);
+                    updateStmt.setInt(2, id_commande);
+                    updateStmt.setInt(3, id_panier);
+                    rowsAffected = updateStmt.executeUpdate();
+                }
+            } else {
+                try (PreparedStatement insertStmt = dbConnection.prepareStatement(insertQuery)) {
+                    insertStmt.setInt(1, id_commande);
+                    insertStmt.setInt(2, id_panier);
+                    insertStmt.setInt(3, quantite);
+                    rowsAffected = insertStmt.executeUpdate();
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return (rowsAffected != 0);
+    }
+
+    public boolean deletePanierFromCommande(int id_commande, int id_produit) {
+        String query = "DELETE FROM ComposeCommande WHERE id_commande = ? AND id_produit = ?";
+        int rowsAffected;
+        try (PreparedStatement ps = dbConnection.prepareStatement(query)) {
+            ps.setInt(1, id_commande);
+            ps.setInt(2, id_produit);
+
+            rowsAffected = ps.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return (rowsAffected != 0);
     }
 }

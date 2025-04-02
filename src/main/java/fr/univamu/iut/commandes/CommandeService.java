@@ -2,7 +2,10 @@ package fr.univamu.iut.commandes;
 
 import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbBuilder;
+import jakarta.ws.rs.NotFoundException;
+
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Classe utilisée pour récupérer les informations nécessaires à la ressource
@@ -15,12 +18,20 @@ public class CommandeService {
      */
     protected CommandeRepositoryInterface commandRepo;
 
+    protected PanierRepositoryInterface panierRepo;
+
     /**
      * Constructeur permettant d'injecter l'accès aux données
-     * @param commandeRepo objet implémentant l'interface d'accès aux données
+     * @param commandeRepo objet implémentant l'interface d'accès aux données des commandes
+     * @param panierRepo objet implémentant l'interface d'accès aux données des paniers
      */
-    public CommandeService(CommandeRepositoryInterface commandeRepo) {
+    public CommandeService(CommandeRepositoryInterface commandeRepo, PanierRepositoryInterface panierRepo) {
         this.commandRepo = commandeRepo;
+        this.panierRepo = panierRepo;
+
+        if (commandRepo == null) {
+            System.err.println("Erreur : commandRepo est null !");
+        }
     }
 
     /**
@@ -51,6 +62,18 @@ public class CommandeService {
         Commande myCommande = commandRepo.getCommande(id_commande);
 
         if (myCommande != null) {
+
+            List<Integer> paniersIds = commandRepo.getPanierIdsOfCommandes(id_commande);
+            List<Panier> paniers = new ArrayList<>();
+            for (Integer idPanier : paniersIds) {
+                Panier panier = panierRepo.getPanier(idPanier);
+                if (panier != null) {
+                    paniers.add(panier);
+                }
+            }
+            myCommande.setPaniers(paniers);
+
+            // création du json et conversion de la commande
             try (Jsonb jsonb = JsonbBuilder.create()) {
                 result = jsonb.toJson(myCommande);
             } catch (Exception e) {
@@ -69,5 +92,13 @@ public class CommandeService {
      */
     public boolean udpateCommande(int id_commande, Commande commande) {
         return commandRepo.updateCommande(id_commande, commande.id_utilisateur, commande.date_retrait);
+    }
+
+    public boolean addPanierToCommande(int id_commande, int id_panier, int quantite) {
+        return commandRepo.updatePanierOfCommande(id_commande, id_panier, quantite);
+    }
+
+    public boolean deletePanierFromCommande(int id_commande, int id_panier) {
+        return commandRepo.deletePanierFromCommande(id_commande, id_panier);
     }
 }

@@ -1,6 +1,7 @@
 package fr.univamu.iut.commandes;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Interface d'accès aux données des livres
@@ -25,6 +26,8 @@ public interface CommandeRepositoryInterface {
      */
     ArrayList<Commande> getAllCommandes();
 
+    List<Integer> getPanierIdsOfCommandes(int id_commande);
+
     /**
      * Méthode permettant de mettre à jour une commande enregistrée.
      * @param id_commande le nouvel id de la commande
@@ -33,5 +36,9 @@ public interface CommandeRepositoryInterface {
      * @return true si le livre existe et la mise à jour a été faite, false sinon
      */
     boolean updateCommande(int id_commande, int id_utilisateur, java.sql.Date date_retrait);
+
+    boolean updatePanierOfCommande(int id_commande, int id_panier, int quantite);
+
+    boolean deletePanierFromCommande(int id_commande, int id_produit);
 
 }

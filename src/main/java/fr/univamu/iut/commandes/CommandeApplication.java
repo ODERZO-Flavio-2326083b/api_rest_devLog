@@ -10,6 +10,11 @@ import jakarta.ws.rs.core.Application;
 @ApplicationScoped
 public class CommandeApplication extends Application {
 
+    @Produces
+    private PanierRepositoryInterface connectPanierApi(){
+        return new PanierRepositoryAPI("http://localhost:8080/paniers-1.0-SNAPSHOT/api/");
+    }
+
     /**
      * Méthode appelée par l'API CDI pour injecter la connection à la base de données au moment de la création de la
      * ressource
@@ -21,7 +26,7 @@ public class CommandeApplication extends Application {
         CommandeRepositoryMariadb db = null;
 
         try {
-            db = new CommandeRepositoryMariadb("jbc:mariadb://mysql-matheobertin.alwaysdata.net/matheobertin_cooperative", "380594", "archilog25");
+            db = new CommandeRepositoryMariadb("jdbc:mariadb://mysql-matheobertin.alwaysdata.net/matheobertin_cooperative", "380594", "archilog25");
         } catch (Exception e) {
             System.err.println(e.getMessage());
         }
@@ -34,5 +39,9 @@ public class CommandeApplication extends Application {
      */
     private void closeDbConnection(@Disposes CommandeRepositoryInterface commandeRepo) {
         commandeRepo.close();
+    }
+
+    private void closePanierApi(@Disposes PanierRepositoryInterface panierRepo) {
+        panierRepo.close();
     }
 }

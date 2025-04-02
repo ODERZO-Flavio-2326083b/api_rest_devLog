@@ -1,6 +1,7 @@
 package fr.univamu.iut.commandes;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Classe représentant une commande
@@ -21,6 +22,8 @@ public class Commande {
      * Date de retrait de la commande
      */
     protected java.sql.Date date_retrait;
+
+    protected List<Panier> paniers;
 
     /**
      * Constructeur par défaut
@@ -66,6 +69,10 @@ public class Commande {
         return date_retrait;
     }
 
+    public List<Panier> getPaniers() {
+        return paniers;
+    }
+
     /**
      * Méthode permettant de modifier l'id de la commande
      * @param id_commande un int correspondant au nouvel id de la commande
@@ -88,6 +95,10 @@ public class Commande {
      */
     public void setDate_retrait(java.sql.Date date_retrait) {
         this.date_retrait = date_retrait;
+    }
+
+    public void setPaniers(List<Panier> paniers) {
+        this.paniers = paniers;
     }
 
     @Override

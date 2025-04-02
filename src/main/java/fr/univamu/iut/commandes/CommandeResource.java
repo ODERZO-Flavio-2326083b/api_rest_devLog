@@ -5,6 +5,8 @@ import jakarta.ws.rs.*;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.core.Response;
 
+import java.util.Map;
+
 /**
  * Ressource associée aux commandes
  * (point d'accès de l'API REST)
@@ -29,9 +31,9 @@ public class CommandeResource {
      * Constructeur permettant d'initialiser le service avec une interface d'accès aux données
      * @param commandeRepo objet implémentant l'interface d'accès aux données
      */
-    public @Inject CommandeResource(CommandeRepositoryInterface commandeRepo)
+    public @Inject CommandeResource(CommandeRepositoryInterface commandeRepo, PanierRepositoryInterface panierRepo)
     {
-        this.service = new CommandeService(commandeRepo);
+        this.service = new CommandeService(commandeRepo, panierRepo);
     }
 
     /**
@@ -85,5 +87,28 @@ public class CommandeResource {
             throw new NotFoundException();
         else
             return Response.ok("updated").build();
+    }
+
+    @PUT
+    @Path("/{id_commande}/paniers/{id_panier}")
+    @Consumes("application/json")
+    public Response addPanierToCommande(@PathParam("id_commande") int id_commande,
+                                        @PathParam("id_panier") int id_panier,
+                                        Map<String, Integer> body) {
+        int quantite = body.getOrDefault("quantite", 1);
+        if (!service.addPanierToCommande(id_commande, id_panier, quantite))
+            throw new NotFoundException();
+        else
+            return Response.ok("added").build();
+    }
+
+    @DELETE
+    @Path("{id_commande}/paniers/{id_panier}")
+    public Response deletePanierFromCommande(@PathParam("id_commande") int id_commande,
+                                             @PathParam("id_panier") int id_panier) {
+        if (!service.deletePanierFromCommande(id_commande, id_panier))
+            throw new NotFoundException();
+        else
+            return Response.ok("deleted").build();
     }
 }
