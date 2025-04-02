@@ -138,7 +138,7 @@ public class PanierRepositoryMariadb implements Closeable, PanierRepositoryInter
 
     @Override
     public boolean updatePanier(int id_panier, float prix, int qtt_panier_dispo) {
-        String query = "UPDATE Panier SET prix=?, qtt_panier_dispo=?, derniere_maj=? WHERE id_panier=?";
+        String query = "UPDATE Panier SET prix=?, qtt_panier_dispo=? WHERE id_panier=?";
 
         int nbRowModified = 0;
 
@@ -148,7 +148,7 @@ public class PanierRepositoryMariadb implements Closeable, PanierRepositoryInter
         try ( PreparedStatement ps = dbConnection.prepareStatement(query)) {
             ps.setString(1, String.valueOf(prix));
             ps.setString(2, String.valueOf(qtt_panier_dispo));
-            ps.setString(4, String.valueOf(id_panier));
+            ps.setString(3, String.valueOf(id_panier));
 
             nbRowModified = ps.executeUpdate();
         } catch (SQLException e) {
@@ -161,14 +161,23 @@ public class PanierRepositoryMariadb implements Closeable, PanierRepositoryInter
 
     @Override
     public boolean deletePanier(int id_panier) {
-        String query = "DELETE FROM Panier WHERE id_panier=?";
-
+        String query = "DELETE FROM ComposePanier WHERE id_panier=?";
         int nbRowModified = 0;
 
         try (PreparedStatement ps = dbConnection.prepareStatement(query)) {
             ps.setString(1, String.valueOf(id_panier));
 
-            nbRowModified = ps.executeUpdate();
+            nbRowModified += ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        query = "DELETE FROM Panier WHERE id_panier=?";
+
+        try (PreparedStatement ps = dbConnection.prepareStatement(query)) {
+            ps.setString(1, String.valueOf(id_panier));
+
+            nbRowModified += ps.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

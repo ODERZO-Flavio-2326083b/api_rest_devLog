@@ -25,6 +25,11 @@ public class PanierService {
     protected ProduitsUtilisateursRepositoryInterface produitRepo;
 
     /**
+     * Constructeur de base
+     */
+    public PanierService() {}
+
+    /**
      * Constructeur permettant d'injecter l'accès aux données
      * @param panierRepo objet implémentant l'interface d'accès aux données
      */
