@@ -15,7 +15,7 @@ class ModelUser
     private function fetchUsersFromApi()
     {
         // URL de l'API qui fournit les données utilisateurs
-        $apiUrl = "http://localhost:8080/produitsutilisateurs-1.0-SNAPSHOT/api/utilisateurs"; // Remplacez par l'URL de votre API
+        $apiUrl = "http://localhost:8080/produitsutilisateurs-1.0-SNAPSHOT/api/utilisateurs";
 
         // Initialisation de la connexion à l'API avec CURL
         $curlConnection = curl_init();

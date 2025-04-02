@@ -16,11 +16,9 @@ class ControllerProducts
             exit;
         }
 
-        /*
         $model = new ModelProducts();
-        $paniers = $model->getPaniers(); // Récupération des paniers depuis le modèle
-        */
+        $produits = $model->getProducts(); // Récupération des paniers depuis le modèle
 
-        (new ViewProducts())->show();
+        (new ViewProducts($produits))->show();
     }
 }
